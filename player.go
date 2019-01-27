@@ -1,34 +1,59 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 // Player entity
 type Player struct {
-	W int32
-	H int32
+	size int32
+	x, y float64
+}
+
+const (
+	playerSize = 20
+)
+
+func newPlayer() Player {
+	return Player{
+		size: playerSize,
+		x:    (screenWidth - playerSize) / 2,
+		y:    screenHeight - playerSize,
+	}
 }
 
 func (p *Player) draw(r *sdl.Renderer) {
-	const playerSize = 20
-	playerRect := &sdl.Rect{
-		X: (screenWidth - playerSize) / 2,
-		Y: screenHeight - playerSize,
-		W: playerSize,
-		H: playerSize,
+
+	rect := &sdl.Rect{
+		X: int32(p.x),
+		Y: int32(p.y),
+		W: p.size,
+		H: p.size,
 	}
 
-	err := r.FillRect(playerRect)
+	r.SetDrawColor(100, 0, 0, 0)
+	err := r.DrawRect(rect)
 	if err != nil {
-		log.Println("could not draw player rect:", err)
+		fmt.Println("could not draw player rect:", err)
+	}
+	err = r.FillRect(rect)
+	if err != nil {
+		fmt.Println("could not fill player rect:", err)
 	}
 }
 
-func (p *Player) update() {}
+func (p *Player) update() {
+	keys := sdl.GetKeyboardState()
+	if keys[sdl.SCANCODE_LEFT] == 1 {
+		p.x--
+		println("LEFT!!!!", p.x)
+		sdl.Delay(1)
 
-func drawPlayer() {
-
+	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
+		p.x++
+		println("RIGHT!!!!", p.x)
+		sdl.Delay(1)
+	}
 }
