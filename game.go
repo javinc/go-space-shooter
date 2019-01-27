@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -30,20 +32,23 @@ func main() {
 
 	// Enemy dimension size
 	const enemyDim = 60
-	surface.FillRect(&sdl.Rect{
+	enemyRect := &sdl.Rect{
 		X: (screenWidth - enemyDim) / 2,
 		Y: 0,
 		W: enemyDim,
 		H: enemyDim,
-	}, 0xffffffff)
+	}
+	surface.FillRect(enemyRect, 0xffffffff)
+
 	// Player dimension size
 	const playerSize = 20
-	surface.FillRect(&sdl.Rect{
+	playerRect := &sdl.Rect{
 		X: (screenWidth - playerSize) / 2,
 		Y: screenHeight - playerSize,
 		W: playerSize,
 		H: playerSize,
-	}, 0xffff0000)
+	}
+	surface.FillRect(playerRect, 0xffff0000)
 
 	window.UpdateSurface()
 
@@ -56,6 +61,20 @@ func main() {
 				running = false
 				break
 			}
+		}
+
+		keys := sdl.GetKeyboardState()
+		if keys[sdl.SCANCODE_LEFT] == 1 {
+			playerRect.X++
+			println("LEFT!!!!", playerRect.X)
+			time.Sleep(time.Millisecond)
+			window.UpdateSurface()
+
+		} else if keys[sdl.SCANCODE_RIGHT] == 1 {
+			playerRect.X--
+			println("RIGHT!!!!", playerRect.X)
+			time.Sleep(time.Millisecond)
+			window.UpdateSurface()
 		}
 	}
 }
