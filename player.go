@@ -45,13 +45,12 @@ func (p *Player) draw(r *sdl.Renderer) {
 }
 
 func (p *Player) update() {
-	keys := sdl.GetKeyboardState()
-	if keys[sdl.SCANCODE_LEFT] == 1 {
-		p.x -= playerSpeed
-		println("LEFT!!!!", p.x)
 
-	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
+	// Control movement
+	keys := sdl.GetKeyboardState()
+	if keys[sdl.SCANCODE_LEFT] == 1 && p.x > 0 {
+		p.x -= playerSpeed
+	} else if keys[sdl.SCANCODE_RIGHT] == 1 && p.x < (screenWidth-playerSize) {
 		p.x += playerSpeed
-		println("RIGHT!!!!", p.x)
 	}
 }
