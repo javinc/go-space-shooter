@@ -37,6 +37,7 @@ func main() {
 	defer r.Destroy()
 
 	player := newPlayer()
+	enemy := newEnemy()
 
 	for {
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
@@ -50,10 +51,10 @@ func main() {
 		drawBackground(r)
 		r.Clear()
 
+		enemy.draw(r)
+
 		player.draw(r)
 		player.update()
-
-		drawEnemy(r)
 
 		r.Present()
 	}

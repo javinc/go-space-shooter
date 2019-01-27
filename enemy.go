@@ -8,17 +8,28 @@ import (
 
 // Enemy entity
 type Enemy struct {
-	W int32
-	H int32
+	size int32
+	x, y float64
 }
 
-func drawEnemy(r *sdl.Renderer) {
-	const size = 60
+const (
+	enemySize = 60
+)
+
+func newEnemy() Enemy {
+	return Enemy{
+		size: enemySize,
+		x:    (screenWidth - enemySize) / 2,
+		y:    0,
+	}
+}
+
+func (e *Enemy) draw(r *sdl.Renderer) {
 	rect := &sdl.Rect{
-		X: (screenWidth - size) / 2,
-		Y: 0,
-		W: size,
-		H: size,
+		X: int32(e.x),
+		Y: int32(e.y),
+		W: e.size,
+		H: e.size,
 	}
 
 	r.SetDrawColor(255, 255, 255, 0)

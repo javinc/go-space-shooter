@@ -13,7 +13,8 @@ type Player struct {
 }
 
 const (
-	playerSize = 20
+	playerSize  = 20
+	playerSpeed = 0.5
 )
 
 func newPlayer() Player {
@@ -25,7 +26,6 @@ func newPlayer() Player {
 }
 
 func (p *Player) draw(r *sdl.Renderer) {
-
 	rect := &sdl.Rect{
 		X: int32(p.x),
 		Y: int32(p.y),
@@ -47,13 +47,11 @@ func (p *Player) draw(r *sdl.Renderer) {
 func (p *Player) update() {
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_LEFT] == 1 {
-		p.x--
+		p.x -= playerSpeed
 		println("LEFT!!!!", p.x)
-		sdl.Delay(1)
 
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
-		p.x++
+		p.x += playerSpeed
 		println("RIGHT!!!!", p.x)
-		sdl.Delay(1)
 	}
 }
