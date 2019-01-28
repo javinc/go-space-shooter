@@ -9,22 +9,22 @@ import (
 
 // Enemy entity
 type Enemy struct {
+	position
 	color color.RGBA
 	size  int32
-	x, y  float64
 }
 
 const (
 	enemySize = 60
 )
 
-func newEnemy() Enemy {
-	return Enemy{
-		color: colornames.White,
-		size:  enemySize,
-		x:     (screenWidth - enemySize) / 2,
-		y:     0,
-	}
+func newEnemy() (e Enemy) {
+	e.color = colornames.White
+	e.size = enemySize
+	// Placing enemy at the top-mid of the screen.
+	e.x = (screenWidth - enemySize) / 2
+	e.y = 0
+	return
 }
 
 func (e *Enemy) draw(r *sdl.Renderer) error {

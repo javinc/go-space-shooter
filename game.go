@@ -42,8 +42,10 @@ func main() {
 	player := newPlayer()
 	enemy := newEnemy()
 
+	initBulletPool()
+
 	for {
-		// Event loop listener.
+		// Handle event loop listener.
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 			switch e.(type) {
 			case *sdl.QuitEvent:
@@ -59,11 +61,16 @@ func main() {
 			return
 		}
 
+		player.update()
 		if err := player.draw(r); err != nil {
 			fmt.Println("could not draw player:", err)
 			return
 		}
-		player.update()
+
+		for _, b := range bulletPool {
+			b.update()
+			b.draw(r)
+		}
 
 		r.Present()
 	}

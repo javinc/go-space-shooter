@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"golang.org/x/image/colornames"
@@ -9,24 +10,28 @@ import (
 
 // Player entity
 type Player struct {
-	color color.RGBA
-	size  int32
-	x, y  float64
+	position
+	color     color.RGBA
+	size      int32
+	lastFired time.Time
 }
 
 const (
-	playerSize  = 20
+	playerSize = 20
+	// Player movement speed.
 	playerSpeed = 0.4
+	// Number of bullets fired per second.
+	playerFireRate = 12
 )
 
-func newPlayer() Player {
-	return Player{
-		color: colornames.Red,
-		size:  playerSize,
-		// Placing player at the bottom-mid
-		x: (screenWidth - playerSize) / 2,
-		y: screenHeight - playerSize,
-	}
+func newPlayer() (p Player) {
+	p.color = colornames.Red
+	p.size = playerSize
+	// Place player at the bottom-mid of the screen.
+	p.x = (screenWidth - playerSize) / 2
+	p.y = screenHeight - playerSize
+
+	return
 }
 
 func (p *Player) draw(r *sdl.Renderer) error {
@@ -48,14 +53,36 @@ func (p *Player) draw(r *sdl.Renderer) error {
 }
 
 func (p *Player) update() error {
-	// Control movement
-	keys := sdl.GetKeyboardState()
-	switch {
-	case keys[sdl.SCANCODE_LEFT] == 1 && p.x > 0:
-		p.x -= playerSpeed
-	case keys[sdl.SCANCODE_RIGHT] == 1 && p.x < (screenWidth-playerSize):
-		p.x += playerSpeed
-	}
+	kk := sdl.GetKeyboardState()
+
+	// Control movements.
+	p.movement(kk)
+
+	// Shoot bullets.
+	p.shoot(kk)
 
 	return nil
+}
+
+func (p *Player) movement(kk []uint8) {
+	if kk[sdl.SCANCODE_LEFT] == 1 && p.x > 0 {
+		p.x -= playerSpeed
+	} else if kk[sdl.SCANCODE_RIGHT] == 1 && p.x < (screenWidth-playerSize) {
+		p.x += playerSpeed
+	}
+}
+
+func (p *Player) shoot(kk []uint8) {
+	if kk[sdl.SCANCODE_SPACE] == 1 {
+		if time.Since(p.lastFired) >= (time.Second / playerFireRate) {
+			if b, ok := bulletFromPool(); ok {
+				b.active = true
+				// Place bullet on top of the player.
+				b.x = p.x + float32(b.size/2)
+				b.y = p.y - float32(p.size/2)
+			}
+
+			p.lastFired = time.Now()
+		}
+	}
 }
