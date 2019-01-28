@@ -1,31 +1,35 @@
 package main
 
 import (
-	"fmt"
+	"image/color"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"golang.org/x/image/colornames"
 )
 
 // Player entity
 type Player struct {
-	size int32
-	x, y float64
+	color color.RGBA
+	size  int32
+	x, y  float64
 }
 
 const (
 	playerSize  = 20
-	playerSpeed = 0.5
+	playerSpeed = 0.4
 )
 
 func newPlayer() Player {
 	return Player{
-		size: playerSize,
-		x:    (screenWidth - playerSize) / 2,
-		y:    screenHeight - playerSize,
+		color: colornames.Red,
+		size:  playerSize,
+		// Placing player at the bottom-mid
+		x: (screenWidth - playerSize) / 2,
+		y: screenHeight - playerSize,
 	}
 }
 
-func (p *Player) draw(r *sdl.Renderer) {
+func (p *Player) draw(r *sdl.Renderer) error {
 	rect := &sdl.Rect{
 		X: int32(p.x),
 		Y: int32(p.y),
@@ -33,19 +37,20 @@ func (p *Player) draw(r *sdl.Renderer) {
 		H: p.size,
 	}
 
-	r.SetDrawColor(100, 0, 0, 0)
-	err := r.DrawRect(rect)
-	if err != nil {
-		fmt.Println("could not draw player rect:", err)
+	if err := setDrawColorByColorname(r, p.color); err != nil {
+		return err
 	}
-	err = r.FillRect(rect)
-	if err != nil {
-		fmt.Println("could not fill player rect:", err)
+	if err := r.DrawRect(rect); err != nil {
+		return err
 	}
+	if err := r.FillRect(rect); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (p *Player) update() {
-
+func (p *Player) update() error {
 	// Control movement
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_LEFT] == 1 && p.x > 0 {
@@ -53,4 +58,6 @@ func (p *Player) update() {
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 && p.x < (screenWidth-playerSize) {
 		p.x += playerSpeed
 	}
+
+	return nil
 }

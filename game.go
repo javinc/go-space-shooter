@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"golang.org/x/image/colornames"
 )
 
 const (
+	windowTitle  = "Shoot-em-Up"
 	screenWidth  = 450
 	screenHeight = 600
 )
@@ -19,7 +22,7 @@ func main() {
 	defer sdl.Quit()
 
 	w, err := sdl.CreateWindow(
-		"shoot-em-up",
+		windowTitle,
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		screenWidth, screenHeight,
 		sdl.WINDOW_OPENGL)
@@ -40,20 +43,26 @@ func main() {
 	enemy := newEnemy()
 
 	for {
+		// Event loop listener.
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 			switch e.(type) {
 			case *sdl.QuitEvent:
-				println("Quit")
+				fmt.Println("Quit")
 				return
 			}
 		}
 
 		drawBackground(r)
-		r.Clear()
 
-		enemy.draw(r)
+		if err := enemy.draw(r); err != nil {
+			fmt.Println("could not draw enemy:", err)
+			return
+		}
 
-		player.draw(r)
+		if err := player.draw(r); err != nil {
+			fmt.Println("could not draw player:", err)
+			return
+		}
 		player.update()
 
 		r.Present()
@@ -61,5 +70,10 @@ func main() {
 }
 
 func drawBackground(r *sdl.Renderer) {
-	r.SetDrawColor(0, 0, 0, 0)
+	setDrawColorByColorname(r, colornames.Black)
+	r.Clear()
+}
+
+func setDrawColorByColorname(r *sdl.Renderer, c color.RGBA) error {
+	return r.SetDrawColor(c.R, c.G, c.B, c.A)
 }

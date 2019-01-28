@@ -1,15 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"image/color"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"golang.org/x/image/colornames"
 )
 
 // Enemy entity
 type Enemy struct {
-	size int32
-	x, y float64
+	color color.RGBA
+	size  int32
+	x, y  float64
 }
 
 const (
@@ -18,13 +20,14 @@ const (
 
 func newEnemy() Enemy {
 	return Enemy{
-		size: enemySize,
-		x:    (screenWidth - enemySize) / 2,
-		y:    0,
+		color: colornames.White,
+		size:  enemySize,
+		x:     (screenWidth - enemySize) / 2,
+		y:     0,
 	}
 }
 
-func (e *Enemy) draw(r *sdl.Renderer) {
+func (e *Enemy) draw(r *sdl.Renderer) error {
 	rect := &sdl.Rect{
 		X: int32(e.x),
 		Y: int32(e.y),
@@ -32,13 +35,15 @@ func (e *Enemy) draw(r *sdl.Renderer) {
 		H: e.size,
 	}
 
-	r.SetDrawColor(255, 255, 255, 0)
-	err := r.DrawRect(rect)
-	if err != nil {
-		fmt.Println("could not draw enemy rect:", err)
+	if err := setDrawColorByColorname(r, e.color); err != nil {
+		return err
 	}
-	err = r.FillRect(rect)
-	if err != nil {
-		fmt.Println("could not fill enemy rect:", err)
+	if err := r.DrawRect(rect); err != nil {
+		return err
 	}
+	if err := r.FillRect(rect); err != nil {
+		return err
+	}
+
+	return nil
 }
