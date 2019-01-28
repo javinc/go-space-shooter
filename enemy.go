@@ -38,9 +38,6 @@ func (e *Enemy) draw(r *sdl.Renderer) error {
 	if err := setDrawColorByColorname(r, e.color); err != nil {
 		return err
 	}
-	if err := r.DrawRect(rect); err != nil {
-		return err
-	}
 	if err := r.FillRect(rect); err != nil {
 		return err
 	}

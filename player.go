@@ -40,9 +40,6 @@ func (p *Player) draw(r *sdl.Renderer) error {
 	if err := setDrawColorByColorname(r, p.color); err != nil {
 		return err
 	}
-	if err := r.DrawRect(rect); err != nil {
-		return err
-	}
 	if err := r.FillRect(rect); err != nil {
 		return err
 	}
@@ -53,9 +50,10 @@ func (p *Player) draw(r *sdl.Renderer) error {
 func (p *Player) update() error {
 	// Control movement
 	keys := sdl.GetKeyboardState()
-	if keys[sdl.SCANCODE_LEFT] == 1 && p.x > 0 {
+	switch {
+	case keys[sdl.SCANCODE_LEFT] == 1 && p.x > 0:
 		p.x -= playerSpeed
-	} else if keys[sdl.SCANCODE_RIGHT] == 1 && p.x < (screenWidth-playerSize) {
+	case keys[sdl.SCANCODE_RIGHT] == 1 && p.x < (screenWidth-playerSize):
 		p.x += playerSpeed
 	}
 
