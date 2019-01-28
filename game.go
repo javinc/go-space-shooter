@@ -68,7 +68,7 @@ func main() {
 		}
 
 		for _, b := range bulletPool {
-			b.update()
+			b.update(&enemy)
 			b.draw(r)
 		}
 

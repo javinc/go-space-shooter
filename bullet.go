@@ -34,6 +34,7 @@ func newBullet() (b Bullet) {
 }
 
 func (b *Bullet) draw(r *sdl.Renderer) error {
+	// Dont draw if not active.
 	if !b.active {
 		return nil
 	}
@@ -55,12 +56,30 @@ func (b *Bullet) draw(r *sdl.Renderer) error {
 	return nil
 }
 
-func (b *Bullet) update() error {
+func (b *Bullet) update(e *Enemy) error {
 	b.y -= bulletSpeed
 
 	// Bring back the bullet from the pool when off-screen.
 	if b.y < 0 || b.x < 0 {
 		b.active = false
+	}
+
+	// Handle collision-detection.
+	br := &sdl.Rect{
+		X: int32(b.x),
+		Y: int32(b.y),
+		W: b.size,
+		H: b.size,
+	}
+	er := &sdl.Rect{
+		X: int32(e.x),
+		Y: int32(e.y),
+		W: e.size,
+		H: e.size,
+	}
+	if br.HasIntersection(er) && b.active == true {
+		b.active = false
+		e.size -= 10
 	}
 
 	return nil
