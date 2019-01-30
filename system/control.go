@@ -8,7 +8,7 @@ import (
 
 // Control system.
 type Control struct {
-	W, H int32
+	w, h int32
 }
 
 // NewControl Control system constructor.
@@ -31,7 +31,7 @@ func (s *Control) Process(ee []*ecs.Entity) {
 		velocity := 0.4
 		if kk[sdl.SCANCODE_LEFT] == 1 && pos.X > 0 {
 			pos.X -= velocity
-		} else if kk[sdl.SCANCODE_RIGHT] == 1 && pos.X < float64(s.W-rect.W) {
+		} else if kk[sdl.SCANCODE_RIGHT] == 1 && pos.X < float64(s.w-rect.W) {
 			pos.X += velocity
 		}
 	}
