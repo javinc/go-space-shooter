@@ -21,18 +21,18 @@ func (s *Control) Process(ee []*ecs.Entity) {
 	kk := sdl.GetKeyboardState()
 
 	for _, e := range ee {
-		if !e.Requires("input", "rect", "position") {
+		if !e.Requires("input", "velocity", "rect", "position") {
 			continue
 		}
 
 		rect := e.Get("rect").(*component.Rect)
 		pos := e.Get("position").(*component.Position)
+		vel := e.Get("velocity").(*component.Velocity)
 
-		velocity := 0.4
 		if kk[sdl.SCANCODE_LEFT] == 1 && pos.X > 0 {
-			pos.X -= velocity
+			pos.X -= vel.Speed
 		} else if kk[sdl.SCANCODE_RIGHT] == 1 && pos.X < float64(s.w-rect.W) {
-			pos.X += velocity
+			pos.X += vel.Speed
 		}
 	}
 }

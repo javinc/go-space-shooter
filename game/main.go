@@ -23,7 +23,7 @@ func main() {
 
 	// Register systems.
 	engine.SystemManager.Add(system.NewControl(screenWidth, screenHeight))
-	engine.SystemManager.Add(system.NewRender(e.Renderer))
+	engine.SystemManager.Add(system.NewRender(engine.Renderer))
 
 	engine.Run()
 	engine.Stop()
@@ -36,6 +36,7 @@ func newPlayer() *ecs.Entity {
 	e.Add(component.NewRect(colornames.Red, size, size))
 	// Place player at the bottom-mid of the screen.
 	e.Add(component.NewPosition((screenWidth-size)/2, screenHeight-size))
+	e.Add(component.NewVelocity(0.5))
 	e.Add(component.NewInput())
 	return e
 }
