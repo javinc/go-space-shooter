@@ -2,7 +2,6 @@ package component
 
 // Projectile component.
 type Projectile struct {
-	Active bool
 }
 
 // NewProjectile projectile constructor.

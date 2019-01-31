@@ -7,9 +7,10 @@ type Entity struct {
 }
 
 // NewEntity entity constructor.
-func NewEntity() *Entity {
+func NewEntity(name string) *Entity {
 	return &Entity{
-		cm: &ComponentManager{},
+		Name: name,
+		cm:   &ComponentManager{},
 	}
 }
 
@@ -50,11 +51,13 @@ func (em *EntityManager) Get(name string) *Entity {
 }
 
 // Filter return array of entity filter by name.
-func (em *EntityManager) Filter(name string) []*Entity {
+func (em *EntityManager) Filter(names ...string) []*Entity {
 	hit := []*Entity{}
 	for _, e := range em.All() {
-		if e.Name == name {
-			hit = append(hit, e)
+		for _, n := range names {
+			if e.Name == n {
+				hit = append(hit, e)
+			}
 		}
 	}
 

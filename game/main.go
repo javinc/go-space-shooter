@@ -33,9 +33,8 @@ func main() {
 // returns player composition.
 func newPlayer() *ecs.Entity {
 	const size = 20
-	e := ecs.NewEntity()
-	e.Name = "player"
-	e.AddComponent(component.NewRect(colornames.Red, size, size))
+	e := ecs.NewEntity("player")
+	e.AddComponent(component.NewRect(colornames.Red, size, size, true))
 	// Place player at the bottom-mid of the screen.
 	e.AddComponent(component.NewPosition((screenWidth-size)/2, screenHeight-size))
 	e.AddComponent(component.NewVelocity(0.5))
@@ -46,8 +45,8 @@ func newPlayer() *ecs.Entity {
 // returns enemy composition.
 func newEnemy() *ecs.Entity {
 	const size = 60
-	e := ecs.NewEntity()
-	e.AddComponent(component.NewRect(colornames.White, size, size))
+	e := ecs.NewEntity("enemy")
+	e.AddComponent(component.NewRect(colornames.White, size, size, true))
 	// Placing enemy at the top-mid of the screen.
 	e.AddComponent(component.NewPosition((screenWidth-size)/2, 0))
 	return e
@@ -56,8 +55,8 @@ func newEnemy() *ecs.Entity {
 // returns bullet composition.
 func newBullet() *ecs.Entity {
 	const size = 10
-	e := ecs.NewEntity()
-	e.AddComponent(component.NewRect(colornames.Orange, size, size))
+	e := ecs.NewEntity("bullet")
+	e.AddComponent(component.NewRect(colornames.Orange, size, size, false))
 	e.AddComponent(component.NewPosition((screenWidth-size)/2, screenHeight-size))
 	e.AddComponent(component.NewVelocity(1))
 	e.AddComponent(component.NewProjectile())

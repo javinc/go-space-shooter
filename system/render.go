@@ -17,18 +17,23 @@ func NewRender(r *sdl.Renderer) *Render {
 }
 
 // Process Render system implements System interface.
-func (s *Render) Process(ee []*ecs.Entity) {
+func (s *Render) Process(em *ecs.EntityManager) {
 	// Draw background.
 	s.r.SetDrawColor(0, 0, 0, 0)
 	s.r.Clear()
 
-	for _, e := range ee {
+	for _, e := range em.All() {
 		cm := e.ComponentManager()
 		if !cm.Requires("rect", "position") {
 			continue
 		}
 
 		rect := cm.Get("rect").(*component.Rect)
+		// Render active only.
+		if !rect.Active {
+			continue
+		}
+
 		pos := cm.Get("position").(*component.Position)
 		s.draw(rect, pos)
 	}

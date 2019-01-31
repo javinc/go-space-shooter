@@ -2,7 +2,7 @@ package ecs
 
 // System handles entities component logic.
 type System interface {
-	Process([]*Entity)
+	Process(*EntityManager)
 }
 
 // SystemManager manages systems for the game.
@@ -18,6 +18,6 @@ func (sm *SystemManager) Add(s System) {
 // ProcessAll executes all systems on entities.
 func (sm *SystemManager) ProcessAll(em *EntityManager) {
 	for _, s := range sm.ss {
-		s.Process(em.All())
+		s.Process(em)
 	}
 }

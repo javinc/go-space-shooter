@@ -17,12 +17,16 @@ func NewControl(w, h int32) *Control {
 }
 
 // Process Control system implements System interface.
-func (s *Control) Process(ee []*ecs.Entity) {
+func (s *Control) Process(em *ecs.EntityManager) {
 	kk := sdl.GetKeyboardState()
 
-	for _, e := range ee {
-		s.movement(kk, e.ComponentManager())
-		s.shoot(kk, e.ComponentManager())
+	// Only for player and bullet entities
+	player := em.Get("player").ComponentManager()
+	s.movement(kk, player)
+
+	for _, e := range em.Filter("bullet") {
+		bullet := e.ComponentManager()
+		s.shoot(kk, player, bullet)
 	}
 }
 
@@ -42,24 +46,32 @@ func (s *Control) movement(kk []uint8, e *ecs.ComponentManager) {
 	}
 }
 
-func (s *Control) shoot(kk []uint8, e *ecs.ComponentManager) {
-	if !e.Requires("projectile", "velocity", "rect", "position") {
+func (s *Control) shoot(kk []uint8, player, bullet *ecs.ComponentManager) {
+	if !bullet.Requires("projectile", "velocity", "rect", "position") {
 		return
 	}
 
-	proj := e.Get("projectile").(*component.Projectile)
-	pos := e.Get("position").(*component.Position)
-	vel := e.Get("velocity").(*component.Velocity)
+	bulletRect := bullet.Get("rect").(*component.Rect)
+	bulletPos := bullet.Get("position").(*component.Position)
+	bulletVel := bullet.Get("velocity").(*component.Velocity)
 
-	if proj.Active {
-		pos.Y -= vel.Speed
+	// Projecting to top.
+	if bulletRect.Active {
+		bulletPos.Y -= bulletVel.Speed
 	}
 
-	if pos.X < 0 || pos.Y < 0 {
-		proj.Active = false
+	// Out of bounds.
+	if bulletPos.X < 0 || bulletPos.Y < 0 {
+		bulletRect.Active = false
 	}
 
+	// Hit shoot.
 	if kk[sdl.SCANCODE_SPACE] == 1 {
-		proj.Active = true
+		playerRect := player.Get("rect").(*component.Rect)
+		playerPos := player.Get("position").(*component.Position)
+
+		bulletRect.Active = true
+		bulletPos.X = playerPos.X + float64(bulletRect.W/2)
+		bulletPos.Y = playerPos.Y - float64(playerRect.H/2)
 	}
 }
