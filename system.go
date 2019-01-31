@@ -5,7 +5,7 @@ type System interface {
 	Process([]*Entity)
 }
 
-// SystemManager manages systems.
+// SystemManager manages systems for the game.
 type SystemManager struct {
 	ss []System
 }
@@ -15,9 +15,9 @@ func (sm *SystemManager) Add(s System) {
 	sm.ss = append(sm.ss, s)
 }
 
-// Process executes all systems on entities.
-func (sm *SystemManager) Process(ee []*Entity) {
+// ProcessAll executes all systems on entities.
+func (sm *SystemManager) ProcessAll(em *EntityManager) {
 	for _, s := range sm.ss {
-		s.Process(ee)
+		s.Process(em.All())
 	}
 }

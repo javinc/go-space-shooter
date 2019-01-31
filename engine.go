@@ -8,15 +8,16 @@ import (
 
 // Engine represents objects and world.
 type Engine struct {
+	// Window settings.
 	title        string
 	screenWidth  int32
 	screenHeight int32
 
-	Renderer *sdl.Renderer
+	// Managers
+	em *EntityManager
+	sm *SystemManager
 
-	EntityManager
-	ComponentManager
-	SystemManager
+	Renderer *sdl.Renderer
 
 	closeFn func()
 }
@@ -27,6 +28,8 @@ func New(title string, w, h int32) *Engine {
 	e.title = title
 	e.screenWidth = w
 	e.screenHeight = h
+	e.em = &EntityManager{}
+	e.sm = &SystemManager{}
 	return e
 }
 
@@ -42,19 +45,39 @@ func (g *Engine) Start() error {
 
 // Run engine game loop.
 func (g *Engine) Run() error {
+	stick := sdl.JoystickOpen(0)
+
 	for {
 		// Handle event loop listener.
-		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
-			switch e.(type) {
-			case *sdl.QuitEvent:
+		for evt := sdl.PollEvent(); evt != nil; evt = sdl.PollEvent() {
+			switch evt.GetType() {
+			case sdl.QUIT:
+				stick.Close()
 				fmt.Println("Quit")
 				return nil
+			case sdl.JOYAXISMOTION:
+				jae := evt.(*sdl.JoyAxisEvent)
+				if jae.Value < -3200 || jae.Value > 3200 {
+					fmt.Println("JoyAxisEvent", jae.Axis)
+				}
+			case sdl.JOYBUTTONDOWN:
+				fmt.Println("JOYBUTTONDOWN")
 			}
 		}
 
 		// Run all systems.
-		g.SystemManager.Process(g.EntityManager.All())
+		g.sm.ProcessAll(g.em)
 	}
+}
+
+// AddEntity adds new entity.
+func (g *Engine) AddEntity(e *Entity) {
+	g.em.Add(e)
+}
+
+// AddSystem adds new system.
+func (g *Engine) AddSystem(s System) {
+	g.sm.Add(s)
 }
 
 // Stop engine destroy things.

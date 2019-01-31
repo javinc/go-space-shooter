@@ -10,7 +10,7 @@ type Component interface {
 	Name() string
 }
 
-// ComponentManager manages components.
+// ComponentManager manages components for entity.
 type ComponentManager struct {
 	// Component name regsitry.
 	names []string
@@ -50,6 +50,18 @@ func (cm *ComponentManager) Get(name string) Component {
 	}
 
 	return nil
+}
+
+// Remove remove component base on name.
+func (cm *ComponentManager) Remove(name string) {
+	cc := cm.cc
+	for i, c := range cc {
+		if c.Name() == name {
+			// Remove element from the slice.
+			cc = append(cc[:i], cc[i+1:]...)
+			return
+		}
+	}
 }
 
 func (cm *ComponentManager) hasName(name string) bool {

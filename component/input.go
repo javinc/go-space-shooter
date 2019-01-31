@@ -4,7 +4,7 @@ package component
 type Input struct {
 }
 
-// NewInput Input constructor.
+// NewInput input constructor.
 func NewInput() *Input {
 	return &Input{}
 }

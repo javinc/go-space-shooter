@@ -2,17 +2,28 @@ package ecs
 
 // Entity represents a composition of components.
 type Entity struct {
-	tag string
-	ComponentManager
+	Name string
+	cm   *ComponentManager
 }
 
 // NewEntity entity constructor.
 func NewEntity() *Entity {
-	e := new(Entity)
-	return e
+	return &Entity{
+		cm: &ComponentManager{},
+	}
 }
 
-// EntityManager manages entities.
+// AddComponent add new component to entity.
+func (e *Entity) AddComponent(c Component) {
+	e.cm.Add(c)
+}
+
+// ComponentManager return entity's ComponentManager.
+func (e *Entity) ComponentManager() *ComponentManager {
+	return e.cm
+}
+
+// EntityManager manages entities for the system.
 type EntityManager struct {
 	ee []*Entity
 }
@@ -25,4 +36,27 @@ func (em *EntityManager) Add(e *Entity) {
 // All returns all entities.
 func (em *EntityManager) All() []*Entity {
 	return em.ee
+}
+
+// Get return single entity base on name.
+func (em *EntityManager) Get(name string) *Entity {
+	for _, e := range em.All() {
+		if e.Name == name {
+			return e
+		}
+	}
+
+	return nil
+}
+
+// Filter return array of entity filter by name.
+func (em *EntityManager) Filter(name string) []*Entity {
+	hit := []*Entity{}
+	for _, e := range em.All() {
+		if e.Name == name {
+			hit = append(hit, e)
+		}
+	}
+
+	return hit
 }

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	title        = "ECS TEST"
+	title        = "Shoot-em-Up"
 	screenWidth  = 450
 	screenHeight = 600
 )
@@ -18,12 +18,13 @@ func main() {
 	engine.Start()
 
 	// Register entities.
-	engine.EntityManager.Add(newPlayer())
-	engine.EntityManager.Add(newEnemy())
+	engine.AddEntity(newEnemy())
+	engine.AddEntity(newPlayer())
+	engine.AddEntity(newBullet())
 
 	// Register systems.
-	engine.SystemManager.Add(system.NewControl(screenWidth, screenHeight))
-	engine.SystemManager.Add(system.NewRender(engine.Renderer))
+	engine.AddSystem(system.NewControl(screenWidth, screenHeight))
+	engine.AddSystem(system.NewRender(engine.Renderer))
 
 	engine.Run()
 	engine.Stop()
@@ -33,11 +34,12 @@ func main() {
 func newPlayer() *ecs.Entity {
 	const size = 20
 	e := ecs.NewEntity()
-	e.Add(component.NewRect(colornames.Red, size, size))
+	e.Name = "player"
+	e.AddComponent(component.NewRect(colornames.Red, size, size))
 	// Place player at the bottom-mid of the screen.
-	e.Add(component.NewPosition((screenWidth-size)/2, screenHeight-size))
-	e.Add(component.NewVelocity(0.5))
-	e.Add(component.NewInput())
+	e.AddComponent(component.NewPosition((screenWidth-size)/2, screenHeight-size))
+	e.AddComponent(component.NewVelocity(0.5))
+	e.AddComponent(component.NewInput())
 	return e
 }
 
@@ -45,8 +47,19 @@ func newPlayer() *ecs.Entity {
 func newEnemy() *ecs.Entity {
 	const size = 60
 	e := ecs.NewEntity()
-	e.Add(component.NewRect(colornames.White, size, size))
+	e.AddComponent(component.NewRect(colornames.White, size, size))
 	// Placing enemy at the top-mid of the screen.
-	e.Add(component.NewPosition((screenWidth-size)/2, 0))
+	e.AddComponent(component.NewPosition((screenWidth-size)/2, 0))
+	return e
+}
+
+// returns bullet composition.
+func newBullet() *ecs.Entity {
+	const size = 10
+	e := ecs.NewEntity()
+	e.AddComponent(component.NewRect(colornames.Orange, size, size))
+	e.AddComponent(component.NewPosition((screenWidth-size)/2, screenHeight-size))
+	e.AddComponent(component.NewVelocity(1))
+	e.AddComponent(component.NewProjectile())
 	return e
 }

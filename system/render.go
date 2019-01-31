@@ -23,12 +23,13 @@ func (s *Render) Process(ee []*ecs.Entity) {
 	s.r.Clear()
 
 	for _, e := range ee {
-		if !e.Requires("rect", "position") {
+		cm := e.ComponentManager()
+		if !cm.Requires("rect", "position") {
 			continue
 		}
 
-		rect := e.Get("rect").(*component.Rect)
-		pos := e.Get("position").(*component.Position)
+		rect := cm.Get("rect").(*component.Rect)
+		pos := cm.Get("position").(*component.Position)
 		s.draw(rect, pos)
 	}
 
