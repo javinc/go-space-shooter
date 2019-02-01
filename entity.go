@@ -2,15 +2,15 @@ package ecs
 
 // Entity represents a composition of components.
 type Entity struct {
-	Name string
-	cm   *ComponentManager
+	ID string
+	cm *ComponentManager
 }
 
 // NewEntity entity constructor.
 func NewEntity(name string) *Entity {
 	return &Entity{
-		Name: name,
-		cm:   &ComponentManager{},
+		ID: name,
+		cm: &ComponentManager{},
 	}
 }
 
@@ -44,7 +44,7 @@ func (em *EntityManager) All() []*Entity {
 // Get return single entity base on name.
 func (em *EntityManager) Get(name string) *Entity {
 	for _, e := range em.All() {
-		if e.Name == name {
+		if e.ID == name {
 			return e
 		}
 	}
@@ -57,7 +57,7 @@ func (em *EntityManager) Filter(names ...string) []*Entity {
 	hit := []*Entity{}
 	for _, e := range em.All() {
 		for _, n := range names {
-			if e.Name == n {
+			if e.ID == n {
 				hit = append(hit, e)
 			}
 		}

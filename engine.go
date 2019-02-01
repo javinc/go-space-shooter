@@ -29,7 +29,9 @@ func New(title string, w, h int32) *Engine {
 	e.screenWidth = w
 	e.screenHeight = h
 	e.em = &EntityManager{}
-	e.sm = &SystemManager{}
+	e.sm = &SystemManager{
+		eventCh: make(chan sdl.Event),
+	}
 	return e
 }
 
@@ -45,23 +47,13 @@ func (g *Engine) Start() error {
 
 // Run engine game loop.
 func (g *Engine) Run() error {
-	stick := sdl.JoystickOpen(0)
-
 	for {
 		// Handle event loop listener.
 		for evt := sdl.PollEvent(); evt != nil; evt = sdl.PollEvent() {
 			switch evt.GetType() {
 			case sdl.QUIT:
-				stick.Close()
 				fmt.Println("Quit")
 				return nil
-			case sdl.JOYAXISMOTION:
-				jae := evt.(*sdl.JoyAxisEvent)
-				if jae.Value < -3200 || jae.Value > 3200 {
-					fmt.Println("JoyAxisEvent", jae.Axis)
-				}
-			case sdl.JOYBUTTONDOWN:
-				fmt.Println("JOYBUTTONDOWN")
 			}
 		}
 

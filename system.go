@@ -1,5 +1,9 @@
 package ecs
 
+import (
+	"github.com/veandco/go-sdl2/sdl"
+)
+
 // System handles entities component logic.
 type System interface {
 	Process(*EntityManager)
@@ -7,7 +11,8 @@ type System interface {
 
 // SystemManager manages systems for the game.
 type SystemManager struct {
-	ss []System
+	eventCh chan sdl.Event
+	ss      []System
 }
 
 // Add appends new system.

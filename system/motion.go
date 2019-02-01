@@ -28,13 +28,12 @@ func (s *Motion) Process(em *ecs.EntityManager) {
 
 		pos := cm.Get("position").(*component.Position)
 		vel := cm.Get("velocity").(*component.Velocity)
-		// proj := cm.Get("position").(*component.Projectile)
 
 		// Shoot up
 		pos.Y -= vel.Speed
 
 		// Out of bounds for reuse
-		if pos.Y < 0 || pos.X < 0 {
+		if pos.Y < float64(-rect.H) || pos.X < float64(-rect.W) {
 			rect.Active = false
 		}
 	}
