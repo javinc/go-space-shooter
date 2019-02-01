@@ -48,7 +48,7 @@ func newBullet() *ecs.Entity {
 		input,
 		component.NewRect(colornames.Orange, size, size, false),
 		component.NewPosition((screenWidth-size)/2, screenHeight-size),
-		component.NewVelocity(1),
+		component.NewVelocity(1.5),
 		component.NewProjectile(),
 	)
 	return e
