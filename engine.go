@@ -75,9 +75,11 @@ func (g *Engine) AddEntity(e *Entity) {
 	g.em.Add(e)
 }
 
-// AddSystem adds new system.
-func (g *Engine) AddSystem(s System) {
-	g.sm.Add(s)
+// AddSystems adds new system.
+func (g *Engine) AddSystems(ss ...System) {
+	for _, s := range ss {
+		g.sm.Add(s)
+	}
 }
 
 // Stop engine destroy things.

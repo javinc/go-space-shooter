@@ -4,6 +4,7 @@ import (
 	"github.com/javinc/ecs"
 	"github.com/javinc/ecs/component"
 	"github.com/javinc/ecs/system"
+	"github.com/veandco/go-sdl2/sdl"
 	"golang.org/x/image/colornames"
 )
 
@@ -13,18 +14,26 @@ const (
 	screenHeight = 600
 )
 
+var engine *ecs.Engine
+
+func init() {
+	engine = ecs.New(title, screenWidth, screenHeight)
+}
+
 func main() {
-	engine := ecs.New(title, screenWidth, screenHeight)
 	engine.Start()
 
 	// Register entities.
 	engine.AddEntity(newEnemy())
 	engine.AddEntity(newPlayer())
-	engine.AddEntity(newBullet())
+	newEntityPool(newBullet, 30)
 
 	// Register systems.
-	engine.AddSystem(system.NewControl(screenWidth, screenHeight))
-	engine.AddSystem(system.NewRender(engine.Renderer))
+	engine.AddSystems(
+		system.NewControl(screenWidth, screenHeight),
+		system.NewMotion(),
+		system.NewRender(engine.Renderer),
+	)
 
 	engine.Run()
 	engine.Stop()
@@ -32,13 +41,19 @@ func main() {
 
 // returns player composition.
 func newPlayer() *ecs.Entity {
+	input := component.NewInput()
+	input.Map[sdl.SCANCODE_LEFT] = component.InputMoveLeft
+	input.Map[sdl.SCANCODE_RIGHT] = component.InputMoveRight
+
 	const size = 20
 	e := ecs.NewEntity("player")
-	e.AddComponent(component.NewRect(colornames.Red, size, size, true))
-	// Place player at the bottom-mid of the screen.
-	e.AddComponent(component.NewPosition((screenWidth-size)/2, screenHeight-size))
-	e.AddComponent(component.NewVelocity(0.5))
-	e.AddComponent(component.NewInput())
+	e.AddComponents(
+		input,
+		component.NewRect(colornames.Red, size, size, true),
+		// Place player at the bottom-mid of the screen.
+		component.NewPosition((screenWidth-size)/2, screenHeight-size),
+		component.NewVelocity(0.5),
+	)
 	return e
 }
 
@@ -46,19 +61,33 @@ func newPlayer() *ecs.Entity {
 func newEnemy() *ecs.Entity {
 	const size = 60
 	e := ecs.NewEntity("enemy")
-	e.AddComponent(component.NewRect(colornames.White, size, size, true))
-	// Placing enemy at the top-mid of the screen.
-	e.AddComponent(component.NewPosition((screenWidth-size)/2, 0))
+	e.AddComponents(
+		component.NewRect(colornames.White, size, size, true),
+		// Placing enemy at the top-mid of the screen.
+		component.NewPosition((screenWidth-size)/2, 0),
+	)
 	return e
 }
 
 // returns bullet composition.
 func newBullet() *ecs.Entity {
+	input := component.NewInput()
+	input.Map[sdl.SCANCODE_SPACE] = component.InputShootBullet
+
 	const size = 10
 	e := ecs.NewEntity("bullet")
-	e.AddComponent(component.NewRect(colornames.Orange, size, size, false))
-	e.AddComponent(component.NewPosition((screenWidth-size)/2, screenHeight-size))
-	e.AddComponent(component.NewVelocity(1))
-	e.AddComponent(component.NewProjectile())
+	e.AddComponents(
+		input,
+		component.NewRect(colornames.Orange, size, size, false),
+		component.NewPosition((screenWidth-size)/2, screenHeight-size),
+		component.NewVelocity(1),
+		component.NewProjectile(),
+	)
 	return e
+}
+
+func newEntityPool(fn func() *ecs.Entity, count int) {
+	for i := 0; i < count; i++ {
+		engine.AddEntity(fn())
+	}
 }

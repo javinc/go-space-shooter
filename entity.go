@@ -14,9 +14,11 @@ func NewEntity(name string) *Entity {
 	}
 }
 
-// AddComponent add new component to entity.
-func (e *Entity) AddComponent(c Component) {
-	e.cm.Add(c)
+// AddComponents add new component to entity.
+func (e *Entity) AddComponents(cc ...Component) {
+	for _, c := range cc {
+		e.cm.Add(c)
+	}
 }
 
 // ComponentManager return entity's ComponentManager.
