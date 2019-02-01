@@ -10,15 +10,16 @@ import (
 
 // Control system.
 type Control struct {
-	w, h     int32
+	width    int32
+	height   int32
 	lastShot time.Time
 }
 
 // NewControl Control system constructor.
 func NewControl(w, h int32) *Control {
 	return &Control{
-		w: w,
-		h: h,
+		width:  w,
+		height: h,
 	}
 }
 
@@ -67,11 +68,18 @@ func (s *Control) movement(kk []uint8, cm *ecs.ComponentManager) {
 	pos := cm.Get("position").(*component.Position)
 	vel := cm.Get("velocity").(*component.Velocity)
 
-	// Supports dynamic mapping.
+	// TODO! Supports dynamic mapping.
 	if kk[sdl.SCANCODE_LEFT] == 1 && pos.X > 0 {
 		pos.X -= vel.Speed
-	} else if kk[sdl.SCANCODE_RIGHT] == 1 && pos.X < float64(s.w-rect.W) {
+	}
+	if kk[sdl.SCANCODE_RIGHT] == 1 && pos.X < float64(s.width-rect.W) {
 		pos.X += vel.Speed
+	}
+	if kk[sdl.SCANCODE_UP] == 1 && pos.Y > 0 {
+		pos.Y -= vel.Speed
+	}
+	if kk[sdl.SCANCODE_DOWN] == 1 && pos.Y < float64(s.height-rect.H) {
+		pos.Y += vel.Speed
 	}
 }
 

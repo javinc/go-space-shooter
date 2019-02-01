@@ -94,7 +94,7 @@ func (g *Engine) setupSDL() error {
 		return fmt.Errorf("could not create window:: %s", err)
 	}
 
-	g.Renderer, err = sdl.CreateRenderer(win, -1, sdl.RENDERER_ACCELERATED)
+	g.Renderer, err = sdl.CreateRenderer(win, -1, sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC)
 	if err != nil {
 		return fmt.Errorf("could not create renderer: %s", err)
 	}
