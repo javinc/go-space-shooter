@@ -47,6 +47,8 @@ func (g *Engine) Start() error {
 
 // Run engine game loop.
 func (g *Engine) Run() error {
+	const fpsCap = 60
+
 	for {
 		// Handle event loop listener.
 		for evt := sdl.PollEvent(); evt != nil; evt = sdl.PollEvent() {
@@ -59,6 +61,9 @@ func (g *Engine) Run() error {
 
 		// Run all systems.
 		g.sm.ProcessAll(g.em)
+
+		// 60 fps
+		sdl.Delay(1000 / fpsCap)
 	}
 }
 
@@ -94,7 +99,7 @@ func (g *Engine) setupSDL() error {
 		return fmt.Errorf("could not create window:: %s", err)
 	}
 
-	g.Renderer, err = sdl.CreateRenderer(win, -1, sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC)
+	g.Renderer, err = sdl.CreateRenderer(win, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		return fmt.Errorf("could not create renderer: %s", err)
 	}
