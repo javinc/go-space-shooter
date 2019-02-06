@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"golang.org/x/image/colornames"
@@ -44,6 +45,21 @@ func main() {
 
 	initBulletPool()
 
+	// display average fps
+	frameCtr := 0
+	ticker := time.NewTicker(time.Second)
+	go func() {
+		ticks := 0
+		for range ticker.C {
+			ticks++
+			avgFps := frameCtr / ticks
+			if avgFps > 2000000 {
+				avgFps = 0
+			}
+			fmt.Println("fps:", avgFps)
+		}
+	}()
+
 	for {
 		// Handle event loop listener.
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
@@ -73,6 +89,8 @@ func main() {
 		}
 
 		r.Present()
+
+		frameCtr++
 	}
 }
 
