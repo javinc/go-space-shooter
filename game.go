@@ -46,27 +46,34 @@ func main() {
 	initBulletPool()
 
 	// Display average fps
+	frameAvg := 0
 	frameCtr := 0
 	frameTicks := 0
 	frameTicker := time.NewTicker(time.Second)
 	go func() {
 		for range frameTicker.C {
 			frameTicks++
-			fmt.Println("fps:", calcAvgFps(frameCtr, frameTicks))
+
+			avgFps := frameCtr / frameTicks
+			frameAvg = avgFps
+
+			fmt.Println("fps:", frameAvg)
 		}
 	}()
 
 	// Capping frame 60 per second.
 	const frameCapMs = 1000 / 60
 
+	var capTicks int
+	capTicker := time.NewTicker(time.Millisecond)
+	go func() {
+		for range capTicker.C {
+			capTicks++
+		}
+	}()
+
 	for {
-		capTicks := 0
-		capTicker := time.NewTicker(time.Millisecond)
-		go func() {
-			for range capTicker.C {
-				capTicks++
-			}
-		}()
+		capTicks = 0
 
 		// Handle event loop listener.
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
@@ -103,7 +110,6 @@ func main() {
 			d := frameCapMs - capTicks
 			sdl.Delay(uint32(d))
 		}
-		capTicker.Stop()
 	}
 }
 
