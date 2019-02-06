@@ -45,22 +45,29 @@ func main() {
 
 	initBulletPool()
 
-	// display average fps
+	// Display average fps
 	frameCtr := 0
-	frameTicker := time.NewTicker(time.Second)
 	frameTicks := 0
+	frameTicker := time.NewTicker(time.Second)
 	go func() {
 		for range frameTicker.C {
 			frameTicks++
-			avgFps := frameCtr / frameTicks
-			if avgFps > 2000000 {
-				avgFps = 0
-			}
-			fmt.Println("fps:", avgFps)
+			fmt.Println("fps:", calcAvgFps(frameCtr, frameTicks))
 		}
 	}()
 
+	// Capping frame 60 per second.
+	const frameCapMs = 1000 / 60
+
 	for {
+		capTicks := 0
+		capTicker := time.NewTicker(time.Millisecond)
+		go func() {
+			for range capTicker.C {
+				capTicks++
+			}
+		}()
+
 		// Handle event loop listener.
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 			switch e.(type) {
@@ -91,6 +98,12 @@ func main() {
 		r.Present()
 
 		frameCtr++
+
+		if capTicks < frameCapMs {
+			d := frameCapMs - capTicks
+			sdl.Delay(uint32(d))
+		}
+		capTicker.Stop()
 	}
 }
 
@@ -101,4 +114,13 @@ func drawBackground(r *sdl.Renderer) {
 
 func setDrawColorByColorname(r *sdl.Renderer, c color.RGBA) error {
 	return r.SetDrawColor(c.R, c.G, c.B, c.A)
+}
+
+func calcAvgFps(frames, ticks int) int {
+	avgFps := frames / ticks
+	if avgFps > 2000000 {
+		avgFps = 0
+	}
+
+	return avgFps
 }

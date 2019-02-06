@@ -18,7 +18,7 @@ type Bullet struct {
 
 const (
 	bulletSize  = 10
-	bulletSpeed = 1
+	bulletSpeed = 15
 
 	bulletPoolMax = 30
 )

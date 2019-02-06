@@ -19,7 +19,7 @@ type Player struct {
 const (
 	playerSize = 20
 	// Player movement speed.
-	playerSpeed = 0.4
+	playerSpeed = 4
 	// Number of bullets fired per second.
 	playerFireRate = 12
 )
