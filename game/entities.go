@@ -20,7 +20,7 @@ func newPlayer() *ecs.Entity {
 		component.NewRect(colornames.Red, size, size, true),
 		// Place player at the bottom-mid of the screen.
 		component.NewPosition((screenWidth-size)/2, screenHeight-size),
-		component.NewVelocity(0.5),
+		component.NewVelocity(0.1),
 	)
 	return e
 }
@@ -48,7 +48,7 @@ func newBullet() *ecs.Entity {
 		input,
 		component.NewRect(colornames.Orange, size, size, false),
 		component.NewPosition((screenWidth-size)/2, screenHeight-size),
-		component.NewVelocity(1.5),
+		component.NewVelocity(0.3),
 		component.NewProjectile(),
 	)
 	return e
