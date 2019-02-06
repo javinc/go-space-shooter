@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 	"golang.org/x/image/colornames"
 )
 
@@ -21,6 +22,12 @@ func main() {
 		return
 	}
 	defer sdl.Quit()
+
+	if err := ttf.Init(); err != nil {
+		fmt.Println("could not initialize TTF:", err)
+		return
+	}
+	defer ttf.Quit()
 
 	w, err := sdl.CreateWindow(
 		windowTitle,
@@ -56,8 +63,6 @@ func main() {
 
 			avgFps := frameCtr / frameTicks
 			frameAvg = avgFps
-
-			fmt.Println("fps:", frameAvg)
 		}
 	}()
 
@@ -86,6 +91,11 @@ func main() {
 
 		drawBackground(r)
 
+		text := fmt.Sprintf("%d", frameAvg)
+		if err := drawText(r, text); err != nil {
+			fmt.Println(err)
+		}
+
 		if err := enemy.draw(r); err != nil {
 			fmt.Println("could not draw enemy:", err)
 			return
@@ -107,8 +117,7 @@ func main() {
 		frameCtr++
 
 		if capTicks < frameCapMs {
-			d := frameCapMs - capTicks
-			sdl.Delay(uint32(d))
+			sdl.Delay(uint32(frameCapMs - capTicks))
 		}
 	}
 }
@@ -120,6 +129,38 @@ func drawBackground(r *sdl.Renderer) {
 
 func setDrawColorByColorname(r *sdl.Renderer, c color.RGBA) error {
 	return r.SetDrawColor(c.R, c.G, c.B, c.A)
+}
+
+func drawText(r *sdl.Renderer, text string) error {
+	f, err := ttf.OpenFont("res/fonts/flappy.ttf", 20)
+	if err != nil {
+		return fmt.Errorf("could not load font: %v", err)
+	}
+	defer f.Close()
+
+	c := sdl.Color{R: 0, G: 255, B: 0, A: 255}
+	s, err := f.RenderUTF8Solid(text, c)
+	if err != nil {
+		return fmt.Errorf("could not render title: %v", err)
+	}
+	defer s.Free()
+
+	t, err := r.CreateTextureFromSurface(s)
+	if err != nil {
+		return fmt.Errorf("could not create texture: %v", err)
+	}
+	defer t.Destroy()
+
+	if err := r.Copy(t, nil, &sdl.Rect{
+		W: 20,
+		H: 20,
+		X: screenWidth - 30,
+		Y: 10,
+	}); err != nil {
+		return fmt.Errorf("could not copy texture: %v", err)
+	}
+
+	return nil
 }
 
 func calcAvgFps(frames, ticks int) int {
