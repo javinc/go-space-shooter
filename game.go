@@ -47,12 +47,12 @@ func main() {
 
 	// display average fps
 	frameCtr := 0
-	ticker := time.NewTicker(time.Second)
+	frameTicker := time.NewTicker(time.Second)
+	frameTicks := 0
 	go func() {
-		ticks := 0
-		for range ticker.C {
-			ticks++
-			avgFps := frameCtr / ticks
+		for range frameTicker.C {
+			frameTicks++
+			avgFps := frameCtr / frameTicks
 			if avgFps > 2000000 {
 				avgFps = 0
 			}
