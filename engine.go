@@ -63,7 +63,7 @@ func (g *Engine) Run() error {
 		g.sm.ProcessAll(g.em)
 
 		// 60 fps
-		sdl.Delay(1000 / fpsCap)
+		//sdl.Delay(1000 / fpsCap)
 	}
 }
 
