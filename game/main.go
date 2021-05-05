@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/javinc/go-space-shooter"
-	"github.com/javinc/go-space-shooter/system"
+	"github.com/kudarap/go-space-shooter"
+	"github.com/kudarap/go-space-shooter/system"
 )
 
 const (

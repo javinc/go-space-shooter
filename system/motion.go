@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/javinc/go-space-shooter"
-	"github.com/javinc/go-space-shooter/component"
+	"github.com/kudarap/go-space-shooter"
+	"github.com/kudarap/go-space-shooter/component"
 )
 
 // Motion system.

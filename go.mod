@@ -1,4 +1,4 @@
-module github.com/javinc/go-space-shooter
+module github.com/kudarap/go-space-shooter
 
 go 1.16
 

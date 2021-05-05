@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/javinc/go-space-shooter"
-	"github.com/javinc/go-space-shooter/component"
+	"github.com/kudarap/go-space-shooter"
+	"github.com/kudarap/go-space-shooter/component"
 	"github.com/veandco/go-sdl2/sdl"
 	"golang.org/x/image/colornames"
 )
